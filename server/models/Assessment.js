@@ -5,7 +5,7 @@ const mongoose=require("mongoose");
            instructor:
            {
             type:mongoose.Schema.Types.ObjectId,
-            ref:"user",
+            ref:"User",
             required:true
                },
            question:{

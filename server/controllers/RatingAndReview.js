@@ -55,9 +55,9 @@ exports.createRating= async (req,res) =>
     {
         return res.status(500).json({
             success: false,
-            message:"An error occured while posting the Reviews"
-        },
-        {new:true})
+            message:err.message
+        }
+        )
     }
 }
 

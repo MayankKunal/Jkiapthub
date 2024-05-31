@@ -1,7 +1,7 @@
  const jwt=require("jsonwebtoken");
  require("dotenv").config();
 
- const User=require("../models/User");
+  const user=require("../models/User");
 
  exports.auth=async (req,res,next)=>
  {
@@ -22,7 +22,7 @@
         //verify the token
         try{
             const decode =  jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
+            // console.log(decode);
             req.user = decode;
         }
         catch(err) {
@@ -95,7 +95,7 @@
  exports.isAdmin=async(req,res,next)=>
  {
     try{
-        console.log(req.user.accountType);
+        // console.log(req.user.accountType);
     if(req.user.accountType !== 'Admin')
     {
             return res.status(401).json({

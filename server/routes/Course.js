@@ -38,7 +38,7 @@ const {
     
 }=require('../controllers/RatingAndReview')
 
-
+const {updateCourseProgress}=require("../controllers/CourseProgess");
 const {
     auth,isAdmin,isInstructor,isStudent
 }=require('../middlewares/auth')
@@ -53,11 +53,13 @@ router.post("/updateSubSection",auth,isInstructor,updateSubSection);
 
 router.post("/createCourse",auth,isInstructor,createCourse);
 router.get('/getAllCourses',getAllCourses);
-router.get('/courseDetails',getCourseDetails)
+router.post('/getCourseDetails',getCourseDetails)
 router.post("/editCourse", auth, isInstructor, editCourse);
 router.get("/getInstructorCourses",auth,isInstructor,getInstructorCourses);
 router.delete('/deleteCourse',auth,isInstructor,deleteCourse);
 router.post("/getFullCourseDetails", auth, getFullCourseDetails)
+router.post("/updateCourseProgress",auth,isStudent,updateCourseProgress);
+// http://localhost:4000/api/v1/course/updateCourseProgress
 // router.post('/getFullCourseDetails',auth,isInstructor,getFullCourseDetailsllCourseDetails)
 
 

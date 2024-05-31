@@ -2,6 +2,7 @@ const Answer=require('../models/Answer');
 const   Assessment=require('../models/Assessment')
 const {uploadImageToCloudinary}=require("../utils/imageUpload");
 const User=require('../models/User');
+const mongoose = require('mongoose');
 
 exports.createAnswer=async(req,res)=>
 {
@@ -51,5 +52,77 @@ exports.createAnswer=async(req,res)=>
             error:err.message
         })
 
+    }
+}
+exports.updateAnswer = async (req, res) => {
+    try {
+        console.log("Nhi fata");
+        const answer = req.files.answer;
+        const { answerId } = req.body;
+        console.log("Nhi fata");
+        console.log(answerId);
+    //  console.log(answer);
+        // Ensure answerId is in the correct ObjectId format
+        // const objectId = mongoose.Types.ObjectId(answerId);
+
+        const image = await uploadImageToCloudinary(
+            answer,
+            process.env.FOLDER_NAME,
+            1000,
+            1000
+        );
+console.log("ANswerId,",answerId);
+        
+
+        const updatedAnswer = await Answer.findByIdAndUpdate(
+            {_id:answerId},
+            { answer: image.secure_url }, // Assuming "answer" is the field where the image URL is stored
+            { new: true }
+        );
+
+        if (!updatedAnswer) {
+            return res.status(404).json({
+                success: false,
+                message: `Answer with ID ${answerId} not found.`,
+            });
+        }
+
+        res.send({
+            success: true,
+            message: `Answer updated successfully`,
+            data: updatedAnswer,
+        });
+    } catch (error) {
+        console.error("Error updating answer:", error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+exports.getMyAnswer=async(req,res)=>
+{
+    try{
+           const studentId=req.user.id;
+        const myAnswer=await Answer.findById(studentId);
+
+        if(!myAnswer) return res.status(404).json({
+            success:true,
+            message:"You have not answered this question",
+        })
+
+        return   res.status(200).json({
+                    success:true,
+                      myAnswer
+                }) 
+
+    }catch(err)
+    {
+        return res.status(500).json({
+            success:false,
+            message:'An Error occured while fetching your answer',
+            error:err.message
+        })
     }
 }

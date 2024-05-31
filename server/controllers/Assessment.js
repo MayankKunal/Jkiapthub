@@ -51,20 +51,34 @@ exports.createAssessment=async(req,res)=>
     }
 }
 
-exports.getAllAssessment=async(req,res)=>
+exports.getAssessment=async(req,res)=>
 {
     try{
+             const {assessmentId}=req.body;
+            //  console.log(assessmentId);
+            //  const assessment = await Assessment.findById(assessmentId);
 
-        const allAssessment=await Assessment.find({},{
+        const assessment=await Assessment.findById(assessmentId,{
             instructor:true,
             question:true,
             answer:true,
-        }).populate("answer").exec();
 
+        }).populate({
+        path: "answer",
+        populate: {
+          path: "student",
+          select: 'firstName lastName image',
+        },
+      }).exec();
+
+            if(!assessment) return res.status(404).json({
+                success:false,
+                message:"Invalid Assessment Id"
+            });
         return res.status(200).json({
             success: true,
             message:"All Assessment for the given Instructor",
-            data:allAssessment
+            data:assessment
         })
     }
     catch(err)
@@ -77,4 +91,38 @@ exports.getAllAssessment=async(req,res)=>
         })
     }
     
+}
+
+exports.getAllQuestion=async(req,res)=>
+{
+      try{
+        const questions = await Assessment.find({}, {
+            question: true,
+          }).populate({
+            path: 'instructor',
+            select: 'firstName lastName image',
+          }).exec();
+
+        if(!questions)
+        {
+            return res.status(404).json({
+                success:false,
+                message:"No Assignment posted Yet"
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+           questions
+        })
+
+      }catch(err)
+      {
+        console.log(err);
+        return res.status(500).json({
+            success:false,
+            error: err.message,
+            message:"Error occred while fetching Question"
+        })
+      }
 }
